@@ -84,11 +84,24 @@ print("Min is {}\nMax is {} \nMean is {}".format(min_,max_,(max_+min_)/2))
 
 
 import json
+import pandas as pd
 
+data = []
+
+# Open the file and read line by line
 with open(file_path, 'r') as file:
-    data = []
-    for line in file:
-        data.append(json.loads(line.strip()))
+    for line_number, line in enumerate(file, start=1):
+        try:
+            # Load JSON from each line
+            parsed_json = json.loads(line.strip())
+            data.append(parsed_json)
+        except json.JSONDecodeError as e:
+            print(f"JSONDecodeError on line {line_number}: {e}")
+            print(f"Problematic line: {line.strip()}")
 
-df = pd.DataFrame(data)
-print(df)
+# Create a DataFrame from the list of dictionaries
+if data:
+    df = pd.DataFrame(data)
+    print(df)
+else:
+    print("No valid JSON data was found.")
