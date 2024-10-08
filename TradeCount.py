@@ -83,8 +83,12 @@ print("Min is {}\nMax is {} \nMean is {}".format(min_,max_,(max_+min_)/2))
 
 
 
-index=aws_redshift_prod
-| spath input=requestParameters.queryString
-| search queryString="*parking_lot_id*"
-| rex field=requestParameters.queryString "(?i)from\s+(?P<schema>[^.]+)\.(?P<table>[^\s]+)"
-| table schema, table, userIdentity.arn
+import json
+
+with open(file_path, 'r') as file:
+    data = []
+    for line in file:
+        data.append(json.loads(line.strip()))
+
+df = pd.DataFrame(data)
+print(df)
