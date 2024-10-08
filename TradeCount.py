@@ -83,25 +83,47 @@ print("Min is {}\nMax is {} \nMean is {}".format(min_,max_,(max_+min_)/2))
 
 
 
-import json
-import pandas as pd
+Hi [Recipient Name],
 
-data = []
+This email outlines the current state of HomeView reporting and proposes changes to optimize its process and resource allocation.
 
-# Open the file and read line by line
-with open(file_path, 'r') as file:
-    for line_number, line in enumerate(file, start=1):
-        try:
-            # Load JSON from each line
-            parsed_json = json.loads(line.strip())
-            data.append(parsed_json)
-        except json.JSONDecodeError as e:
-            print(f"JSONDecodeError on line {line_number}: {e}")
-            print(f"Problematic line: {line.strip()}")
+Background:
 
-# Create a DataFrame from the list of dictionaries
-if data:
-    df = pd.DataFrame(data)
-    print(df)
-else:
-    print("No valid JSON data was found.")
+HomeView is Fannie Mae's free online homeownership education course.  To fulfill Fair Lending requirements and track equitable access, we collect demographic information (race, gender, age, etc.) from enrollees.
+
+Currently, our process involves:
+
+Data Collection: Demographic data is collected during enrollment.
+Data Transfer: Encrypted enrollment data is stored in a marketing data lake.
+Report Generation: We use a Python script to generate reports from the encrypted data. This script requires periodic updates due to the free-form nature of race attribute entries.
+Report Distribution: The Marketing team and Steven H. (for Equitable Reporting) are the primary consumers of this report.
+Challenges:
+
+Demand for the HomeView report from Marketing has significantly decreased.
+Maintaining the script due to free-form race entries requires manual updates.
+Our team's involvement in generating this report diverts resources from other Fair Lending tasks.
+Proposed Solutions:
+
+1. Offload HomeView reporting to Steven H.'s team:
+
+Pros:
+Steven is familiar with the dataset and its purpose.
+Aligns with and enhances their existing Equitable Reporting workflow.
+Cons:
+Steven's team may need to rewrite the script in their preferred language.
+They will need to manage updates for free-form race entries.
+2.  Generate reports on an as-needed basis:
+
+Pros:
+We retain control over the demographic data.
+Cons:
+Periodic updates to the script still require resources.
+We continue to produce reports with minimal demand.
+Recommendation:
+
+I recommend offloading HomeView reporting to Steven H.'s team (option 1). This allows them to fully own the Equitable Reporting process, improves efficiency, and frees our team to focus on other priorities. Carla concurs with this recommendation.
+
+Please share your thoughts and feedback on this proposal.
+
+Thanks,
+Nate
