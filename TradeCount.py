@@ -81,3 +81,39 @@ plt.show()
 
 print("Min is {}\nMax is {} \nMean is {}".format(min_,max_,(max_+min_)/2))
 
+
+
+import pandas as pd
+
+# Sample DataFrame
+data = {'query': [
+    'SELECT * FROM schema1.table1 WHERE id = 1',
+    'SELECT column1, column2 FROM schema2.table2 JOIN schema3.table3 ON condition',
+    'SELECT column FROM schema4.table4'
+]}
+df = pd.DataFrame(data)
+
+def extract_schema_table(query):
+    # Convert query to lower case to avoid case sensitivity issues
+    query_lower = query.lower()
+    # Split based on ' from ', adding spaces to ensure it's a keyword and not part of a name
+    split_query = query_lower.split(' from ')
+    
+    if len(split_query) > 1:
+        # Get the first part of the split that includes the schema.table.
+        after_from = split_query[1]
+        
+        # Split on space to handle any subsequent WHERE, JOIN, etc., keywords
+        parts = after_from.split()
+
+        if len(parts) > 0:
+            schema_table = parts[0]
+            # Split schema.table into schema and table
+            schema, table = schema_table.split('.')
+            return schema, table
+    return None, None
+
+# Apply the function to each row in the DataFrame
+df[['schema', 'table']] = df['query'].apply(lambda query: pd.Series(extract_schema_table(query)))
+
+print(df)
