@@ -83,35 +83,31 @@ print("Min is {}\nMax is {} \nMean is {}".format(min_,max_,(max_+min_)/2))
 
 
 
-import pandas as pd
 
-# Sample DataFrame
-data = {'query': [
-    'SELECT * FROM schema1.table1 WHERE id = 1',
-    'SELECT column1, column2 FROM schema2.table2 JOIN schema3.table3 ON condition',
-    'SELECT column FROM schema4.table4'
-]}
-df = pd.DataFrame(data)
+# Split the s3_path column by '/'
+split_columns = df['s3_path'].str.split('/', expand=True)
 
-def extract_schema_table(query):
-    # Convert query to lower case to avoid case sensitivity issues
-    query_lower = query.lower()
-    # Split based on ' from ', adding spaces to ensure it's a keyword and not part of a name
-    split_query = query_lower.split(' from ')
-    
-    if len(split_query) > 1:
-        # Get the first part of the split that includes the schema.table.
-        after_from = split_query[1]
-        
-        # Split on space to handle any subsequent WHERE, JOIN, etc., keywords
-        parts = after_from.split()
+# Assign split components to new columns
+df['protocol'] = split_columns[0] + '//'  # Adds the '//' back to protocol
+df['bucket_name'] = split_columns[2]
+df['customer_data'] = split_columns[3]
+df['region'] = split_columns[4]
+df['year'] = split_columns[5]
+df['month'] = split_columns[6]
+df['day'] = split_columns[7]
+df['hour'] = split_columns[8]
+df['minute'] = split_columns[9]
+df['second'] = split_columns[10]
+df['event_type'] = split_columns[11]
+df['segment'] = split_columns[12]
+df['project'] = split_columns[13]
+df['object_key'] = split_columns[14]
 
-        if len(parts) > 0:
-            schema_table = parts[0]
-            # Split schema.table into schema and table
-            schema, table = schema_table.split('.')
-            return schema, table
-    return None, None
+# Drop the original s3_path if no longer needed
+# df.drop(columns=['s3_path'], inplace=True)
+
+# Display the DataFrame with new columns
+print(df)
 
 # Apply the function to each row in the DataFrame
 df[['schema', 'table']] = df['query'].apply(lambda query: pd.Series(extract_schema_table(query)))
