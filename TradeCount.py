@@ -84,32 +84,29 @@ print("Min is {}\nMax is {} \nMean is {}".format(min_,max_,(max_+min_)/2))
 
 
 
-# Split the s3_path column by '/'
-split_columns = df['s3_path'].str.split('/', expand=True)
 
-# Assign split components to new columns
-df['protocol'] = split_columns[0] + '//'  # Adds the '//' back to protocol
-df['bucket_name'] = split_columns[2]
-df['customer_data'] = split_columns[3]
-df['region'] = split_columns[4]
-df['year'] = split_columns[5]
-df['month'] = split_columns[6]
-df['day'] = split_columns[7]
-df['hour'] = split_columns[8]
-df['minute'] = split_columns[9]
-df['second'] = split_columns[10]
-df['event_type'] = split_columns[11]
-df['segment'] = split_columns[12]
-df['project'] = split_columns[13]
-df['object_key'] = split_columns[14]
 
-# Drop the original s3_path if no longer needed
-# df.drop(columns=['s3_path'], inplace=True)
 
-# Display the DataFrame with new columns
-print(df)
 
-# Apply the function to each row in the DataFrame
-df[['schema', 'table']] = df['query'].apply(lambda query: pd.Series(extract_schema_table(query)))
+import gzip
+import shutil
+import pyreadstat
+import os
 
-print(df)
+# Define file paths
+compressed_file = 'your_file.sas7bdat.gz'
+decompressed_file = 'your_file_decompressed.sas7bdat'
+
+# Decompress the file to a temporary location
+with gzip.open(compressed_file, 'rb') as f_in:
+    with open(decompressed_file, 'wb') as f_out:
+        shutil.copyfileobj(f_in, f_out)
+
+# Read the decompressed SAS file
+df, meta = pyreadstat.read_sas7bdat(decompressed_file)
+
+# Display the DataFrame
+print(df.head())
+
+# Clean up: remove the decompressed file if you don't need it anymore
+os.remove(decompressed_file)
